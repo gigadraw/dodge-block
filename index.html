@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dodge Block Game</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #222; overflow: hidden; }
+    #gameArea { position: relative; width: 90%; height: 300px; background: #fff; border-radius: 10px; overflow: hidden; }
+
+    #player {
+      position: absolute;
+      bottom: 0;
+      left: 30px;
+      width: 30px;
+      height: 30px;
+      background: #3498db;
+      border-radius: 5px;
+    }
+
+    #obstacle {
+      position: absolute;
+      bottom: 0;
+      right: -40px;
+      width: 30px;
+      height: 30px;
+      background: #e74c3c;
+      animation: moveObstacle 2s linear infinite;
+    }
+
+    @keyframes moveObstacle {
+      0% { right: -40px; }
+      100% { right: 100%; }
+    }
+
+    #message {
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      text-align: center;
+      font-size: 24px;
+      color: #000;
+      font-weight: bold;
+      display: none;
+    }
+  </style>
+</head>
+<body onclick="jump()">
+
+  <div id="gameArea">
+    <div id="player"></div>
+    <div id="obstacle"></div>
+    <div id="message">Game Over! Tap to Restart</div>
+  </div>
+
+  <script>
+    const player = document.getElementById("player");
+    const obstacle = document.getElementById("obstacle");
+    const message = document.getElementById("message");
+
+    let gameOver = false;
+    let jumpHeight = 80;
+    let jumpDuration = 300;
+    let fallingDuration = 300;
+
+    function jump() {
+      if (gameOver) {
+        location.reload();
+        return;
+      }
+
+      // Cancel any ongoing jump animations immediately
+      player.style.transition = "none";
+      player.style.bottom = "0";
+
+      // Force reflow to apply the reset bottom immediately
+      player.offsetHeight;
+
+      // Jump up
+      player.style.transition = `bottom ${jumpDuration}ms ease-out`;
+      player.style.bottom = jumpHeight + "px";
+
+      // Fall down after jumpDuration
+      setTimeout(() => {
+        player.style.transition = `bottom ${fallingDuration}ms ease-in`;
+        player.style.bottom = "0";
+      }, jumpDuration);
+    }
+
+    const checkCollision = () => {
+      if (gameOver) return;
+
+      const playerRect = player.getBoundingClientRect();
+      const obsRect = obstacle.getBoundingClientRect();
+
+      // Simple collision detection for overlapping rects vertically and horizontally
+      if (
+        obsRect.left < playerRect.right &&
+        obsRect.right > playerRect.left &&
+        playerRect.bottom >= obsRect.top
+      ) {
+        gameOver = true;
+        obstacle.style.animationPlayState = "paused";
+        message.style.display = "block";
+      }
+    };
+
+    setInterval(checkCollision, 10);
+  </script>
+
+</body>
+      </html>
