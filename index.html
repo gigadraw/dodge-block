@@ -18,7 +18,8 @@
       position: relative;
       width: 90%;
       height: 300px;
-      background: #fff;
+      background: url('background.png') no-repeat center center;
+      background-size: cover;
       border-radius: 10px;
       overflow: hidden;
     }
@@ -72,21 +73,22 @@
       display: none;
     }
 
-    #score, #bestScore {
+    #score {
       position: absolute;
+      top: 10px;
+      left: 10px;
       font-size: 18px;
       font-weight: bold;
       color: #000;
     }
 
-    #score {
-      top: 10px;
-      left: 10px;
-    }
-
     #bestScore {
+      position: absolute;
       top: 10px;
       right: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
     }
   </style>
 </head>
