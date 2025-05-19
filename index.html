@@ -37,14 +37,14 @@
       position: absolute;
       bottom: 0;
       right: -60px;
-      width: 20px; /* hitbox nhỏ hơn hình */
+      width: 20px;
       height: 20px;
       animation: moveObstacle 2s linear infinite;
       display: flex;
       align-items: flex-end;
       justify-content: center;
       background: none;
-      overflow: visible; /* Cho hình vượt hitbox */
+      overflow: visible;
     }
 
     .spike-image {
@@ -71,6 +71,23 @@
       font-weight: bold;
       display: none;
     }
+
+    #score, #bestScore {
+      position: absolute;
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
+    }
+
+    #score {
+      top: 10px;
+      left: 10px;
+    }
+
+    #bestScore {
+      top: 10px;
+      right: 10px;
+    }
   </style>
 </head>
 <body onclick="jump()">
@@ -81,14 +98,22 @@
       <img src="spike.png" class="spike-image">
     </div>
     <div id="message">Game Over! Tap to Restart</div>
+    <div id="score">Score: 0</div>
+    <div id="bestScore">Best: 0</div>
   </div>
 
   <script>
     const player = document.getElementById("player");
     const obstacle = document.getElementById("obstacle");
     const message = document.getElementById("message");
+    const scoreDisplay = document.getElementById("score");
+    const bestScoreDisplay = document.getElementById("bestScore");
 
     let gameOver = false;
+    let score = 0;
+    let bestScore = localStorage.getItem("bestScore") || 0;
+    bestScoreDisplay.textContent = "Best: " + bestScore;
+
     let jumpHeight = 80;
     let jumpDuration = 300;
     let fallingDuration = 300;
@@ -119,6 +144,13 @@
       }, jumpDuration);
     }
 
+    const scoreInterval = setInterval(() => {
+      if (!gameOver) {
+        score++;
+        scoreDisplay.textContent = "Score: " + score;
+      }
+    }, 200);
+
     setInterval(() => {
       const playerRect = player.getBoundingClientRect();
       const obsRect = obstacle.getBoundingClientRect();
@@ -131,6 +163,11 @@
         gameOver = true;
         obstacle.style.animationPlayState = "paused";
         message.style.display = "block";
+        clearInterval(scoreInterval);
+
+        if (score > bestScore) {
+          localStorage.setItem("bestScore", score);
+        }
       }
     }, 10);
   </script>
