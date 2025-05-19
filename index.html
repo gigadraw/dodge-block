@@ -36,25 +36,28 @@
     #obstacle {
       position: absolute;
       bottom: 0;
-      right: -40px;
-      width: 30px;
-      height: 30px;
+      right: -60px;
+      width: 20px; /* hitbox nhỏ hơn hình */
+      height: 20px;
       animation: moveObstacle 2s linear infinite;
-      background: none;
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      overflow: visible;
+      background: none;
+      overflow: visible; /* Cho hình vượt hitbox */
     }
 
     .spike-image {
       width: 50px;
       height: 25px;
       object-fit: contain;
+      pointer-events: none;
+      position: absolute;
+      bottom: 0;
     }
 
     @keyframes moveObstacle {
-      0% { right: -40px; }
+      0% { right: -60px; }
       100% { right: 100%; }
     }
 
@@ -89,6 +92,7 @@
     let jumpHeight = 80;
     let jumpDuration = 300;
     let fallingDuration = 300;
+    let isJumping = false;
 
     function jump() {
       if (gameOver) {
@@ -96,19 +100,22 @@
         return;
       }
 
-      // Reset current transition to allow instant new jump
+      if (isJumping) return;
+      isJumping = true;
+
       player.style.transition = "none";
       player.style.bottom = "0";
-      player.offsetHeight; // force reflow
+      player.offsetHeight;
 
-      // Jump up
       player.style.transition = `bottom ${jumpDuration}ms ease-out`;
       player.style.bottom = jumpHeight + "px";
 
-      // Fall down
       setTimeout(() => {
         player.style.transition = `bottom ${fallingDuration}ms ease-in`;
         player.style.bottom = "0";
+        setTimeout(() => {
+          isJumping = false;
+        }, fallingDuration);
       }, jumpDuration);
     }
 
